@@ -84,6 +84,7 @@ export default function SetNetworkInRaspberry ({ navigation }) {
             secureTextEntry
             placeholder='Senha...'
             value={password}
+            autoCapitalize='none'
             onChangeText={setPassword}
           />
           <Button
