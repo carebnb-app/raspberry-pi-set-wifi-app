@@ -90,9 +90,9 @@ export default function CheckConnection ({ navigation, route }) {
         )}
         <Text style={style.text}>Verificando conexão com {ssid}</Text>
         <Text style={style.wifiText}>
-          {status === 'await' &&  'Aguardando conexão...'}
-          {status === 'check-connection' &&  'Verificando conexão...'}
-          {status === 'disconnected' &&  'Não foi possivel realizar a conexão. Tente novamente.'}
+          {status === 'await' && 'Aguardando conexão...'}
+          {status === 'check-connection' && 'Verificando conexão...'}
+          {status === 'disconnected' && 'Não foi possivel realizar a conexão. Tente novamente.'}
         </Text>
         <Button onPress={() => navigation.goBack()} title='Voltar' />
       </View>

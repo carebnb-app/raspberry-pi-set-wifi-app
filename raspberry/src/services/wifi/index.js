@@ -21,9 +21,7 @@ let scanned = []
 
 const execIgnoreFail = params => {
   try {
-    const res = cp.execSync(params)
-    console.log(res.toString())
-    return res
+    return cp.execSync(params)
   } catch (err) {
     console.error(err)
   }
