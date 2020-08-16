@@ -1,1 +1,1 @@
-export const COULDNT_CONNECT = 'Não foi possivel a conexão com as credenciais informadas.'
+export const COULD_NOT_CONNECT = 'Não foi possivel a conexão com as credenciais informadas.'

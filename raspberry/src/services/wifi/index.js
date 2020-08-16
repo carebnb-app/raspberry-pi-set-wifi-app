@@ -9,38 +9,30 @@ import _ from 'lodash'
 import fs from 'fs'
 import cp from 'child_process'
 
+import { sleep } from '../../helpers/sleep'
+
 const iw = require('iwlist')(config.IFFACE)
 
 export const disconnect = async () => {
-  const fileName = '/etc/wpa_supplicant/wpa_supplicant.conf'
-
-  const file = fs.readFileSync(fileName).toString().split(/\r|\n/)
-  const findNetwork = _.findIndex(file, l => _.includes(l, 'network={'))
-  const findNetworkAfter = _.findIndex(file, l => _.includes(l, '}'))
-  const fileEnd = (findNetwork !== -1) ? _.map(file, (d, i) => {
-    if (i >= findNetwork && i <= findNetworkAfter) {
-      return ''
-    }
-    return d
-  }) : file
-
-  const result = fileEnd.join('\n').trim()
-
-  fs.writeFileSync(fileName, result)
-
-  execIgnoreFail(`sudo sudo ifconfig ${config.IFFACE} down`)
-  execIgnoreFail(`sudo sudo ifconfig ${config.IFFACE} up`)
+  execIgnoreFail(`sudo wpa_cli -i ${config.IFFACE_CLIENT} DISCONNECT`)
 }
 
 let scanned = []
 
 const execIgnoreFail = params => {
   try {
-    cp.execSync(params)
+    const res = cp.execSync(params)
+    console.log(res.toString())
+    return res
   } catch (err) {
     console.error(err)
   }
+
+  return null
 }
+
+execIgnoreFail('sudo systemctl stop hostapd')
+execIgnoreFail(`sudo iw dev ${config.IFFACE_CLIENT} interface add ${config.IFFACE} type __ap`)
 
 const _scan = () => new Promise((resolve, reject) => {
   iw.scan((err, result) => {
@@ -65,28 +57,17 @@ export const scan = async () => {
   return _scan()
 }
 
-const _getValuesToConnect = (ssid, password) => {
-  const file = path.join(__dirname, '../../../connection.json')
-  const connectorExists = fs.existsSync(file)
+export const checkIfIsConnected = () => {
+  const exec = String(execIgnoreFail(`iw ${config.IFFACE_CLIENT} link`) || 'Not connected')
+  return exec.includes('Not connected') === false
+}
 
-  if (!ssid && !connectorExists) throw new Error('INVALID_PARAMS_TO_CONNECT')
+export const connect = async (ssid, password) => {
+  if (!ssid) {
+    if (checkIfIsConnected() === false) throw new Error('COULD_NOT_CONNECT')
 
-  if (!ssid && connectorExists) {
-    return JSON.parse(fs.readFileSync(file).toString())
+    return { success: true }
   }
-
-  return { ssid, password }
-}
-
-const _saveValuesToConnect = (ssid, password) => {
-  const file = path.join(__dirname, '../../../connection.json')
-
-  fs.writeFileSync(file, JSON.stringify({ ssid, password }, null, 2))
-  console.log('SAVED VALUES AT', file)
-}
-
-export const connect = async (_ssid, _password) => {
-  const { ssid, password } = _getValuesToConnect(_ssid, _password)
 
   const fileName = '/etc/wpa_supplicant/wpa_supplicant.conf'
 
@@ -109,21 +90,17 @@ network={
 `)
 
   fs.writeFileSync(fileName, result)
-  _saveValuesToConnect(ssid, password)
+
+  console.log('SETTED AT', fileName)
+
+  execIgnoreFail(`sudo killall wpa_supplicant`)
+  execIgnoreFail(`sudo wpa_supplicant -B -i${config.IFFACE_CLIENT} -c /etc/wpa_supplicant/wpa_supplicant.conf`)
+
+  await sleep(15000)
+
+  if (checkIfIsConnected() === false) throw new Error('COULD_NOT_CONNECT')
 
   return { success: true }
-}
-
-export const checkIfIsConnected = async () => {
-  try {
-    const result = cp.execSync(`iw ${config.IFFACE} link`).toString()
-
-    if (result.includes('Connected to')) return true
-  } catch (err) {
-    console.error(err)
-  }
-
-  return false
 }
 
 export const enableAccessPoint = async () => {
@@ -151,19 +128,14 @@ export const enableAccessPoint = async () => {
 
   fs.writeFileSync('/etc/hostapd/hostapd.conf', transpileHostapd)
 
-  try {
-    await disconnect()
-  } catch (err) {}
-  execIgnoreFail('sudo systemctl restart dhcpcd')
   console.log('RESTART DHCPCD')
-  execIgnoreFail(`sudo sudo ifconfig ${config.IFFACE} down`)
-  execIgnoreFail(`sudo sudo ifconfig ${config.IFFACE} up`)
-  console.log('RESTART WLAN')
+  execIgnoreFail('sudo systemctl restart dhcpcd')
+  console.log('RESTART HOSTAPD')
   execIgnoreFail('sudo systemctl enable hostapd')
   execIgnoreFail('sudo systemctl unmask hostapd')
   execIgnoreFail('sudo systemctl start hostapd')
   execIgnoreFail('sudo systemctl restart hostapd')
-  console.log('RESTART HOSTAPD')
+  console.log('RESTART DNSMASQ')
   execIgnoreFail('sudo systemctl restart dnsmasq')
   console.log('SUCESS')
 }
@@ -203,9 +175,4 @@ export const disableAccessPoint = async () => {
   } catch (err) {
     console.error(err)
   }
-
-  execIgnoreFail(`sudo sudo ifconfig ${config.IFFACE} down`)
-  execIgnoreFail(`sudo sudo ifconfig ${config.IFFACE} up`)
-
-  console.log('SUCESS')
 }
