@@ -104,7 +104,7 @@ export default class Selector extends Component {
 
     const filtered = filter(
       options,
-      d => includes(removeAccents(String(d.name).toLowerCase()), removeAccents(String(search).toLowerCase()))
+      d => includes(removeAccents(String(d.name || '').toLowerCase()), removeAccents(String(search).toLowerCase()))
     )
 
     return sortByTerm(filtered, 'name', search)

@@ -9,6 +9,7 @@ import { useIsConnectedToNetwork } from './helpers/useIsConnectedToNetwork'
 
 import ConnectToNetwork from './containers/connectToNetwork'
 import SetNetworkInRasoberry from './containers/setNetworkInRaspberry'
+import CheckConnection from './containers/checkConnection'
 
 const Stack = createStackNavigator()
 
@@ -23,6 +24,7 @@ export default function Routes () {
         ) : (
           <Stack.Screen name='ConnectToNetwork' component={ConnectToNetwork} />
         )}
+        <Stack.Screen name='CheckConnection' component={CheckConnection} />
       </Stack.Navigator>
     </NavigationContainer>
   )
