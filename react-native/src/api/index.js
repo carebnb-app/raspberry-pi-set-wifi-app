@@ -15,3 +15,11 @@ export const networks = async () => {
 export const connect = async data => {
   return axios.post(`${config.API_URL}/wifi/connect`, data)
 }
+
+export const checkConnection = async () => {
+  return axios.get(`${config.API_URL}/wifi/status`)
+}
+
+export const disableAccessPoint = async () => {
+  return axios.post(`${config.API_URL}/ap/disable`)
+}

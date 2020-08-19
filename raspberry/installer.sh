@@ -12,10 +12,10 @@ sudo cp -R node-v11.15.0-linux-armv6l/. /usr/local/
 
 # Install dependencies
 sudo apt-get install -y nodejs git
-sudo apt-get install -y build-essential 
-sudo apt-get install -y libudev-dev 
+sudo apt-get install -y build-essential
+sudo apt-get install -y libudev-dev
 sudo apt-get install -y hostapd
-sudo apt-get install -y dnsmasq 
+sudo apt-get install -y dnsmasq
 sudo apt-get install -y iw
 
 # Update apt get (again)

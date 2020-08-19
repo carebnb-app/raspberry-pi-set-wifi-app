@@ -57,17 +57,16 @@ export default function SetNetworkInRaspberry ({ navigation }) {
   const submit = async () => {
     try {
       await connect({ ssid, password })
-      alert('Sucesso!', 'Configurado com sucesso!')
     } catch (err) {
-      if (String(err).includes('Network Error')) {
-        alert('Sucesso!', 'Configurado com sucesso!')
-      } else {
-        alert(
+      if (String(err).includes('Network Error') === false) {
+        return alert(
           'Oops',
           err.response ? err.response.data.message : err.message
         )
       }
     }
+
+    navigation.navigate('CheckConnection', { ssid })
   }
 
   return (
@@ -84,6 +83,7 @@ export default function SetNetworkInRaspberry ({ navigation }) {
             secureTextEntry
             placeholder='Senha...'
             value={password}
+            autoCapitalize='none'
             onChangeText={setPassword}
           />
           <Button

@@ -16,7 +16,7 @@ async function wifiService () {
 
   await sleep(10000)
 
-  const isConnected = config.FORCE_ACCESSPOINT === '1' ? false : await wifiServices.checkIfIsConnected()
+  const isConnected = config.FORCE_ACCESSPOINT === '1' ? false : wifiServices.checkIfIsConnected()
 
   await wifiServices.enableAccessPoint()
 

@@ -10,8 +10,8 @@ import mem from 'mem'
 import Style from './style'
 
 const separateHilight = mem((text, hilight) => {
-  const textWithoutAccents = removeAccents(text).toLowerCase()
-  const indexOfHilight = textWithoutAccents.indexOf(removeAccents(hilight).toLowerCase())
+  const textWithoutAccents = removeAccents(String(text || '')).toLowerCase()
+  const indexOfHilight = textWithoutAccents.indexOf(removeAccents(String(hilight || '')).toLowerCase())
 
   const hilighted = text.substring(indexOfHilight, hilight.length + indexOfHilight)
   const start = indexOfHilight === 0 ? null : text.substring(0, indexOfHilight)
