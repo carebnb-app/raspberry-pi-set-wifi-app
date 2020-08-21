@@ -19,7 +19,5 @@ export const connect = async ({ params }) => {
 
   const result = await wifi.connect(params.ssid, params.password)
 
-  // wifi.disableAccessPoint()
-
   return result
 }

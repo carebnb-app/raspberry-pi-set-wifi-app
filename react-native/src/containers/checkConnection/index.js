@@ -9,11 +9,15 @@ import * as config from '../../../config'
 import * as actions from './actions'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { openSettings } from '../../helpers/openSettings'
+
 import { useIsConnectedToNetwork } from '../../helpers/useIsConnectedToNetwork'
 
 import WifiManager from 'react-native-wifi-reborn'
 
 import alert from '../../helpers/alert'
+
+import { connectToSSID, getCurrentWifiSSID } from '../../helpers/connectToSsid'
 
 function useDispatcher () {
   const dispatch = useDispatch()
@@ -36,12 +40,27 @@ export default function CheckConnection ({ navigation, route }) {
   const { ssid } = route.params
 
   useEffect(() => {
-    WifiManager.getCurrentWifiSSID().then(actualSsid => {
-      if (config.DEFAULT_NETWORK_NAME !== actualSsid) {
-        return WifiManager.connectToSSID(config.DEFAULT_NETWORK_NAME)
+    let timeout = null
+
+    getCurrentWifiSSID().then(ssid => {
+      if (ssid !== config.DEFAULT_NETWORK_NAME) {
+        setStatus('connecting')
+        timeout = setTimeout(() => {
+          connectToSSID(config.DEFAULT_NETWORK_NAME)
+            .then(() => setStatus('await'))
+            .catch(() => {
+              getCurrentWifiSSID().then(ssid => {
+                if (ssid !== config.DEFAULT_NETWORK_NAME) setStatus('failed-connection')
+              })
+            })
+        }, 15000)
+      } else {
+        setStatus('check-connection')
       }
     })
-  }, [])
+
+    return () => timeout && clearTimeout(timeout)
+  }, [setStatus, checkConnection, navigation])
 
   useEffect(() => {
     if (isConnected) { 
@@ -62,8 +81,9 @@ export default function CheckConnection ({ navigation, route }) {
               'Sucesso!',
               'Conectado com sucesso!'
             )
-            disableAccessPoint()
-            navigation.goBack()
+            setTimeout(() => {
+              disableAccessPoint()
+            }, 2000)
           }
         } catch (err) {
           return alert(
@@ -82,6 +102,11 @@ export default function CheckConnection ({ navigation, route }) {
     })
   }, [navigation])
 
+
+  const goBack = () => {
+    navigation.replace(isConnected ? 'SetNetworkInRasoberry' : 'ConnectToNetwork', route.params)
+  }
+
   return (
     <View style={style.container}>
       <View style={style.inside}>
@@ -90,11 +115,14 @@ export default function CheckConnection ({ navigation, route }) {
         )}
         <Text style={style.text}>Verificando conexão com {ssid}</Text>
         <Text style={style.wifiText}>
+          {status === 'connecting' && `Conectando com a rede ${config.DEFAULT_NETWORK_NAME}`}
+          {status === 'failed-connection' && `Não foi possivel conectar a rede ${config.DEFAULT_NETWORK_NAME}`}
           {status === 'await' && 'Aguardando conexão...'}
           {status === 'check-connection' && 'Verificando conexão...'}
-          {status === 'disconnected' && 'Não foi possivel realizar a conexão. Tente novamente.'}
+          {status === 'disconnected' && `Não foi possivel realizar a conexão com a rede ${ssid}. Tente novamente.`}
         </Text>
-        <Button onPress={() => navigation.goBack()} title='Voltar' />
+        {status === 'failed-connection' && <Button onPress={openSettings} title='Conectar manualmente' />}
+        <Button onPress={goBack} title='Voltar' />
       </View>
     </View>
   )

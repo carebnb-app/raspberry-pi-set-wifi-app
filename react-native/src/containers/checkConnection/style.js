@@ -20,13 +20,17 @@ export default StyleSheet.create({
 
   text: {
     textAlign: 'center',
-    fontSize: 18
+    fontSize: 18,
+    marginBottom: 10
   },
 
   wifiText: {
+    width: '90%',
+    height: 100,
     marginTop: 20,
     marginBottom: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
     fontSize: 20
   }
 })

@@ -25,11 +25,11 @@ function useDispatcher () {
   }), [dispatch])
 }
 
-export default function SetNetworkInRaspberry ({ navigation }) {
+export default function SetNetworkInRaspberry ({ route, navigation }) {
   const { getStatus, getNetworks, connect } = useDispatcher()
 
-  const [ssid, setSsid] = useState('')
-  const [password, setPassword] = useState('')
+  const [ssid, setSsid] = useState(route.params?.ssid || '')
+  const [password, setPassword] = useState(route.params?.password || '')
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -41,6 +41,7 @@ export default function SetNetworkInRaspberry ({ navigation }) {
   const status = useSelector(d => d.setNetworkInRaspberry.status)
   const _networks = useSelector(d => d.setNetworkInRaspberry.networks)
   const isLoading = useSelector(d => d.isLoading[actions.connect])
+  const isLoadingNetworks = useSelector(d => d.isLoading[actions.getNetworks])
 
   useEffect(() => {
     if (status === 'success') getNetworks()
@@ -66,7 +67,7 @@ export default function SetNetworkInRaspberry ({ navigation }) {
       }
     }
 
-    navigation.navigate('CheckConnection', { ssid })
+    navigation.navigate('CheckConnection', { ssid, password })
   }
 
   return (
@@ -77,6 +78,7 @@ export default function SetNetworkInRaspberry ({ navigation }) {
             placeholder='Selecionar rede...'
             options={networks}
             value={ssid}
+            isLoading={isLoadingNetworks}
             onChangeText={setSsid}
           />
           <TextInput
@@ -84,6 +86,7 @@ export default function SetNetworkInRaspberry ({ navigation }) {
             placeholder='Senha...'
             value={password}
             autoCapitalize='none'
+            autoCompleteType='password'
             onChangeText={setPassword}
           />
           <Button

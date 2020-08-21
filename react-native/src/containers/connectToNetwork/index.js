@@ -1,12 +1,12 @@
 import React, { useLayoutEffect, useMemo } from 'react'
 
-import { Image, View, Text, Button, Linking, Platform } from 'react-native'
+import { Image, View, Text, Button } from 'react-native'
 
 import style from './style'
 
 import * as config from '../../../config'
 
-import AndroidOpenSettings from 'react-native-android-open-settings'
+import { openSettings } from '../../helpers/openSettings'
 
 export default function ConnectToNetwork ({ navigation }) {
   useLayoutEffect(() => {
@@ -15,13 +15,6 @@ export default function ConnectToNetwork ({ navigation }) {
       headerTitle: 'Conectar a rede...'
     })
   }, [navigation])
-
-  const openSettings = useMemo(() => {
-    return () => {
-      if (Platform.OS === 'ios') Linking.openURL('App-Prefs:root=WIFI')
-      else if (Platform.OS === 'android') AndroidOpenSettings.wifiSettings()
-    }
-  }, [])
 
   return (
     <View style={style.container}>
