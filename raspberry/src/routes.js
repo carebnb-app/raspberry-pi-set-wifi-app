@@ -6,6 +6,8 @@ import * as Status from './controllers/status'
 
 export default function routes (router) {
   router.get('/wifi/list', connect(Wifi.list))
+  router.get('/wifi/status', connect(Wifi.checkConnection))
+  router.post('/ap/disable', connect(Wifi.disable))
   router.get('/status', connect(Status.all))
   router.post('/wifi/connect', connect(Wifi.connect))
 }

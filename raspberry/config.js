@@ -13,7 +13,8 @@ export const NODE_ENV = process.env.NODE_ENV || 'development'
 export const ENVIRONMENT = NODE_ENV
 export const JWT_KEY = process.env.JWT_KEY || 'JD8Gzr5h1k3322Zi1632hOG20nOyczHdRCOxYyZ2gmZZNcK7BufFu4InylIzrv'
 
-export const IFFACE = process.env.IFFACE || 'wlan0'
+export const IFFACE = process.env.IFFACE || 'uap0'
+export const IFFACE_CLIENT = process.env.IFFACE_CLIENT || 'wlan0'
 export const SSID = process.env.SSID || 'Carebnb Device'
 export const IPADDRESS = process.env.IPADDRESS || '192.168.88.1'
 export const SUBNET_RANGE_START = process.env.SUBNET_RANGE_START || '192.168.88.100'
