@@ -71,8 +71,10 @@ export const connect = async (ssid, password) => {
 
   const file = fs.readFileSync(fileName).toString().split(/\r|\n/)
   const findNetwork = _.findIndex(file, l => _.includes(l, 'network={'))
+  const findCountry = _.findIndex(file, l => _.includes(l, 'country='))
   const findNetworkAfter = _.findIndex(file, l => _.includes(l, '}'))
   const fileEnd = (findNetwork !== -1) ? _.map(file, (d, i) => {
+    if (i === findCountry) return ''
     if (i >= findNetwork && i <= findNetworkAfter) {
       return ''
     }
@@ -80,6 +82,8 @@ export const connect = async (ssid, password) => {
   }) : file
 
   const result = fileEnd.join('\n').trim() + (`
+
+country=${config.COUNTRY}
 
 network={
     ssid=${JSON.stringify(ssid)}
