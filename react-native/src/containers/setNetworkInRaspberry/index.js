@@ -2,6 +2,8 @@ import React, { useState, useMemo, useEffect, useLayoutEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 
+import * as RNLocalize from 'react-native-localize'
+
 import { View, Button } from 'react-native'
 
 import Status from '../../components/status'
@@ -57,7 +59,11 @@ export default function SetNetworkInRaspberry ({ route, navigation }) {
 
   const submit = async () => {
     try {
-      await connect({ ssid, password })
+      await connect({ 
+        ssid, 
+        password, 
+        countryCode: RNLocalize.getCountry()
+      })
     } catch (err) {
       if (String(err).includes('Network Error') === false) {
         return alert(

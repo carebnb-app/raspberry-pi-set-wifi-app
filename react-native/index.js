@@ -6,7 +6,7 @@ import 'react-native-gesture-handler'
 
 import React from 'react'
 
-import { AppRegistry } from 'react-native'
+import { AppRegistry, NativeModules } from 'react-native'
 
 import store from './src/state/store'
 
@@ -21,5 +21,7 @@ const App = () => (
     <Routes />
   </Provider>
 )
+
+console.log(NativeModules)
 
 AppRegistry.registerComponent(appName, () => App)

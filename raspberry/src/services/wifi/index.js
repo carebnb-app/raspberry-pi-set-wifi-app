@@ -60,7 +60,7 @@ export const checkIfIsConnected = () => {
   return exec.includes('Not connected') === false
 }
 
-export const connect = async (ssid, password) => {
+export const connect = async (ssid, password, countryCode = config.COUNTRY) => {
   if (!ssid) {
     if (checkIfIsConnected() === false) throw new Error('COULD_NOT_CONNECT')
 
@@ -83,7 +83,7 @@ export const connect = async (ssid, password) => {
 
   const result = fileEnd.join('\n').trim() + (`
 
-country=${config.COUNTRY}
+country=${countryCode}
 
 network={
     ssid=${JSON.stringify(ssid)}

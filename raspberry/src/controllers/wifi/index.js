@@ -17,7 +17,7 @@ export const disable = async () => {
 export const connect = async ({ params }) => {
   if (!params.ssid) throw new Error('INVALID_PARAMS')
 
-  const result = await wifi.connect(params.ssid, params.password)
+  const result = await wifi.connect(params.ssid, params.password, params.countryCode)
 
   return result
 }
