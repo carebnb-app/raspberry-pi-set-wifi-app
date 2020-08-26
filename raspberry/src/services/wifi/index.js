@@ -60,7 +60,7 @@ export const checkIfIsConnected = () => {
   return exec.includes('Not connected') === false
 }
 
-export const connect = async (ssid, password) => {
+export const connect = async (ssid, password, countryCode = config.COUNTRY) => {
   if (!ssid) {
     if (checkIfIsConnected() === false) throw new Error('COULD_NOT_CONNECT')
 
@@ -71,8 +71,10 @@ export const connect = async (ssid, password) => {
 
   const file = fs.readFileSync(fileName).toString().split(/\r|\n/)
   const findNetwork = _.findIndex(file, l => _.includes(l, 'network={'))
+  const findCountry = _.findIndex(file, l => _.includes(l, 'country='))
   const findNetworkAfter = _.findIndex(file, l => _.includes(l, '}'))
   const fileEnd = (findNetwork !== -1) ? _.map(file, (d, i) => {
+    if (i === findCountry) return ''
     if (i >= findNetwork && i <= findNetworkAfter) {
       return ''
     }
@@ -80,6 +82,8 @@ export const connect = async (ssid, password) => {
   }) : file
 
   const result = fileEnd.join('\n').trim() + (`
+
+country=${countryCode}
 
 network={
     ssid=${JSON.stringify(ssid)}
@@ -94,7 +98,11 @@ network={
   execIgnoreFail(`sudo killall wpa_supplicant`)
   execIgnoreFail(`sudo wpa_supplicant -B -i${config.IFFACE_CLIENT} -c /etc/wpa_supplicant/wpa_supplicant.conf`)
 
-  await sleep(20000)
+  await sleep(5000)
+  if (checkIfIsConnected() === false)  execIgnoreFail(`sudo wpa_cli -i${config.IFFACE_CLIENT} RECONFIGURE`)
+  await sleep(5000)
+
+  execIgnoreFail(`sudo ifconfig ${config.IFFACE_CLIENT} up`)
 
   if (checkIfIsConnected() === false) throw new Error('COULD_NOT_CONNECT')
 

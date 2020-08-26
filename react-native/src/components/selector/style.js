@@ -3,6 +3,12 @@ import { StyleSheet } from 'react-native'
 import { scale } from '../../helpers/scale'
 
 export default StyleSheet.create({
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  
   modalContainer: {
     width: '100%',
     height: '100%',

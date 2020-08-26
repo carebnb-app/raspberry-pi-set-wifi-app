@@ -13,7 +13,9 @@ export const networks = async () => {
 }
 
 export const connect = async data => {
-  return axios.post(`${config.API_URL}/wifi/connect`, data)
+  return axios.post(`${config.API_URL}/wifi/connect`, data, {
+    timeout: 15000
+  })
 }
 
 export const checkConnection = async () => {

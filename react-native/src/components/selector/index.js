@@ -6,7 +6,7 @@ import Touchable from '../touchable'
 import TouchableWithHilightedText from '../touchableWithHilightedText'
 import KeyboardAwareness from '../keyboardAwareness'
 
-import { Modal, View, SafeAreaView, ScrollView } from 'react-native'
+import { Modal, View, SafeAreaView, ScrollView, ActivityIndicator } from 'react-native'
 
 import removeAccents from 'remove-accents'
 import sortByTerm from '../../helpers/sortByTerm'
@@ -37,7 +37,9 @@ export default class Selector extends Component {
   }
 
   _renderModal = () => {
-    const filtered = this.filtering()
+    const { isLoading } = this.props
+    
+    const filtered = isLoading ? [] : this.filtering()
 
     return (
       <Modal
@@ -45,41 +47,48 @@ export default class Selector extends Component {
         animated
         animationType='slide'
       >
-      <KeyboardAwareness>
-        <SafeAreaView>
-          <View style={style.modalContainer}>
-            <View style={style.close}>
-              <Touchable onPress={this.toggle}>
-                <Icon name='close-a' size={20} />
-              </Touchable>
+      {isLoading && (
+        <View style={style.center}>
+          <ActivityIndicator color='#000' size='large' />
+        </View>
+      )}
+      {!isLoading && (
+        <KeyboardAwareness>
+          <SafeAreaView>
+            <View style={style.modalContainer}>
+              <View style={style.close}>
+                <Touchable onPress={this.toggle}>
+                  <Icon name='close-a' size={20} />
+                </Touchable>
+              </View>
+              <View style={style.search}>
+                <TextInput
+                  placeholder='Procurar'
+                  value={this.state.search}
+                  onChangeText={this._set}
+                  selectTextOnFocus
+                  autoFocus
+                  onFocus={() => this.setState({ isActive: true })}
+                  onBlur={() => this.setState({ isActive: false })}
+                />
+              </View>
+              <ScrollView
+                keyboardShouldPersistTaps='always'
+              >
+                {filtered.map(d => (
+                  <TouchableWithHilightedText
+                    key={`${this._uuid}-${d.value}`}
+                    hilight={this.state.search}
+                    onPress={() => this._select(d)}
+                  >
+                    {d.name || 'No Name'}
+                  </TouchableWithHilightedText>
+                ))}
+              </ScrollView>
             </View>
-            <View style={style.search}>
-              <TextInput
-                placeholder='Procurar'
-                value={this.state.search}
-                onChangeText={this._set}
-                selectTextOnFocus
-                autoFocus
-                onFocus={() => this.setState({ isActive: true })}
-                onBlur={() => this.setState({ isActive: false })}
-              />
-            </View>
-            <ScrollView
-              keyboardShouldPersistTaps='always'
-            >
-              {filtered.map(d => (
-                <TouchableWithHilightedText
-                  key={`${this._uuid}-${d.value}`}
-                  hilight={this.state.search}
-                  onPress={() => this._select(d)}
-                >
-                  {d.name}
-                </TouchableWithHilightedText>
-              ))}
-            </ScrollView>
-          </View>
-        </SafeAreaView>
-      </KeyboardAwareness>
+          </SafeAreaView>
+        </KeyboardAwareness>
+      )}
       </Modal>
     )
   }

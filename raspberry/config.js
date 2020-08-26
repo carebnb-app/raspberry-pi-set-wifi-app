@@ -21,3 +21,4 @@ export const SUBNET_RANGE_START = process.env.SUBNET_RANGE_START || '192.168.88.
 export const SUBNET_RANGE_END = process.env.SUBNET_RANGE_END || '192.168.88.200'
 export const NETMASK = process.env.NETMASK || '255.255.255.0'
 export const FORCE_ACCESSPOINT = process.env.FORCE_ACCESSPOINT || '1'
+export const COUNTRY = process.env.COUNTRY || 'CA'
