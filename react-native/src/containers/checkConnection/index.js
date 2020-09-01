@@ -47,13 +47,13 @@ export default function CheckConnection ({ navigation, route }) {
         setStatus('connecting')
         timeout = setTimeout(() => {
           connectToSSID(config.DEFAULT_NETWORK_NAME)
-            .then(() => setStatus('await'))
+            .then(() => setStatus('check-connection'))
             .catch(() => {
               getCurrentWifiSSID().then(ssid => {
                 if (ssid !== config.DEFAULT_NETWORK_NAME) setStatus('failed-connection')
               })
             })
-        }, 15000)
+        }, 10000)
       } else {
         setStatus('check-connection')
       }
@@ -71,8 +71,8 @@ export default function CheckConnection ({ navigation, route }) {
   }, [isConnected, setStatus])
 
   useEffect(() => {
-    if (status === 'check-connection') {
-      setTimeout(async () => {
+    const timeout = setTimeout(async () => {
+      if (status === 'check-connection') {
         try {
           const { value: { data: { status } } } = await checkConnection()
           setStatus(status)
@@ -91,8 +91,10 @@ export default function CheckConnection ({ navigation, route }) {
             err.response ? err.response.data.message : err.message
           )
         }
-      }, 4000)
-    }
+      }
+    }, 15000)
+
+    return () => timeout && clearTimeout(timeout)
   }, [status, setStatus, checkConnection])
 
   useLayoutEffect(() => {
