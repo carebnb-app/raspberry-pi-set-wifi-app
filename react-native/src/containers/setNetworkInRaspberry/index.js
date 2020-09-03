@@ -64,14 +64,7 @@ export default function SetNetworkInRaspberry ({ route, navigation }) {
         password, 
         countryCode: RNLocalize.getCountry()
       })
-    } catch (err) {
-      if (String(err).includes('Network Error') === false) {
-        return alert(
-          'Oops',
-          err.response ? err.response.data.message : err.message
-        )
-      }
-    }
+    } catch (err) {}
 
     navigation.navigate('CheckConnection', { ssid, password })
   }
