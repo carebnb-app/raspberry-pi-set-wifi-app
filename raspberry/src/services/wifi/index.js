@@ -61,42 +61,43 @@ export const checkIfIsConnected = () => {
 }
 
 export const connect = async (ssid, password, countryCode = config.COUNTRY) => {
-  if (!ssid) {
-    if (checkIfIsConnected() === false) throw new Error('COULD_NOT_CONNECT')
+  const fileName = '/etc/wpa_supplicant/wpa_supplicant.conf'
 
+  const fileString = fs.readFileSync(fileName).toString()
+  const fileArray = fileString.split(/\r|\n/)
+
+  if (ssid) {
+    const findNetwork = _.findIndex(fileArray, l => _.includes(l, 'network={'))
+    const findCountry = _.findIndex(fileArray, l => _.includes(l, 'country='))
+    const findNetworkAfter = _.findIndex(fileArray, l => _.includes(l, '}'))
+    const fileEnd = (findNetwork !== -1) ? _.map(fileArray, (d, i) => {
+      if (i === findCountry) return ''
+      if (i >= findNetwork && i <= findNetworkAfter) {
+        return ''
+      }
+      return d
+    }) : fileArray
+
+    const result = fileEnd.join('\n').trim() + (`
+
+  country=${countryCode}
+
+  network={
+      ssid=${JSON.stringify(ssid)}
+      ${password ? `psk=${JSON.stringify(password)}` : ''}
+  }
+  `)
+
+    fs.writeFileSync(fileName, result)
+
+    console.log('SETTED AT', fileName)
+  } else if (fileString.includes('network=') === false) {
+    throw new Error('COULD_NOT_CONNECT')
+  } else if (checkIfIsConnected()) {
     return { success: true }
   }
 
-  const fileName = '/etc/wpa_supplicant/wpa_supplicant.conf'
-
-  const file = fs.readFileSync(fileName).toString().split(/\r|\n/)
-  const findNetwork = _.findIndex(file, l => _.includes(l, 'network={'))
-  const findCountry = _.findIndex(file, l => _.includes(l, 'country='))
-  const findNetworkAfter = _.findIndex(file, l => _.includes(l, '}'))
-  const fileEnd = (findNetwork !== -1) ? _.map(file, (d, i) => {
-    if (i === findCountry) return ''
-    if (i >= findNetwork && i <= findNetworkAfter) {
-      return ''
-    }
-    return d
-  }) : file
-
-  const result = fileEnd.join('\n').trim() + (`
-
-country=${countryCode}
-
-network={
-    ssid=${JSON.stringify(ssid)}
-    ${password ? `psk=${JSON.stringify(password)}` : ''}
-}
-`)
-
-  fs.writeFileSync(fileName, result)
-
-  console.log('SETTED AT', fileName)
-
   for (let i = 0; i < 3; i++) {
-    console.log('RETRYING CONNECTING')
     execIgnoreFail(`sudo killall wpa_supplicant`)
     execIgnoreFail(`sudo wpa_supplicant -B -i${config.IFFACE_CLIENT} -c /etc/wpa_supplicant/wpa_supplicant.conf`)
 

@@ -22,10 +22,6 @@ async function wifiService () {
     const autoConnect = setTimeout(async () => {
       console.log('AUTOCONNECT')
       await wifiServices.disableAccessPoint()
-      try {
-        await sleep(10000)
-        await wifiServices.connect()
-      } catch (err) { console.log(err) }
     }, 120000)
 
     set('autoConnect', autoConnect)
