@@ -13,8 +13,6 @@ import { openSettings } from '../../helpers/openSettings'
 
 import { useIsConnectedToNetwork } from '../../helpers/useIsConnectedToNetwork'
 
-import WifiManager from 'react-native-wifi-reborn'
-
 import alert from '../../helpers/alert'
 
 import { connectToSSID, getCurrentWifiSSID } from '../../helpers/connectToSsid'
@@ -40,27 +38,21 @@ export default function CheckConnection ({ navigation, route }) {
   const { ssid } = route.params
 
   useEffect(() => {
-    let timeout = null
-
-    getCurrentWifiSSID().then(ssid => {
-      if (ssid !== config.DEFAULT_NETWORK_NAME) {
+    const timeout = setTimeout(() => {
+      if (isConnected === false) {
         setStatus('connecting')
-        timeout = setTimeout(() => {
-          connectToSSID(config.DEFAULT_NETWORK_NAME)
-            .then(() => setStatus('check-connection'))
-            .catch(() => {
-              getCurrentWifiSSID().then(ssid => {
-                if (ssid !== config.DEFAULT_NETWORK_NAME) setStatus('failed-connection')
-              })
+        connectToSSID(config.DEFAULT_NETWORK_NAME)
+          .then(() => setStatus('check-connection'))
+          .catch(() => {
+            getCurrentWifiSSID().then(ssid => {
+              if (ssid !== config.DEFAULT_NETWORK_NAME) setStatus('failed-connection')
             })
-        }, 10000)
-      } else {
-        setStatus('check-connection')
+          })
       }
-    })
+    }, 15000)
 
-    return () => timeout && clearTimeout(timeout)
-  }, [setStatus, checkConnection, navigation])
+    return () => clearTimeout(timeout)
+  }, [isConnected, setStatus, checkConnection, navigation])
 
   useEffect(() => {
     if (isConnected) { 
@@ -92,7 +84,7 @@ export default function CheckConnection ({ navigation, route }) {
           )
         }
       }
-    }, 15000)
+    }, 32000)
 
     return () => timeout && clearTimeout(timeout)
   }, [status, setStatus, checkConnection])
