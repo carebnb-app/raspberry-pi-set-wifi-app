@@ -95,12 +95,16 @@ network={
 
   console.log('SETTED AT', fileName)
 
-  execIgnoreFail(`sudo killall wpa_supplicant`)
-  execIgnoreFail(`sudo wpa_supplicant -B -i${config.IFFACE_CLIENT} -c /etc/wpa_supplicant/wpa_supplicant.conf`)
+  for (let i = 0; i < 3; i++) {
+    console.log('RETRYING CONNECTING')
+    execIgnoreFail(`sudo killall wpa_supplicant`)
+    execIgnoreFail(`sudo wpa_supplicant -B -i${config.IFFACE_CLIENT} -c /etc/wpa_supplicant/wpa_supplicant.conf`)
 
-  await sleep(5000)
-  if (checkIfIsConnected() === false)  execIgnoreFail(`sudo wpa_cli -i${config.IFFACE_CLIENT} RECONFIGURE`)
-  await sleep(5000)
+    await sleep(5000)
+    if (checkIfIsConnected() === false) execIgnoreFail(`sudo wpa_cli -i${config.IFFACE_CLIENT} RECONFIGURE`)
+    await sleep(5000)
+    if (checkIfIsConnected()) break
+  }
 
   execIgnoreFail(`sudo ifconfig ${config.IFFACE_CLIENT} up`)
 
