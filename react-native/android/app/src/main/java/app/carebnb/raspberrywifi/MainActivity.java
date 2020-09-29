@@ -1,4 +1,4 @@
-package com.wificonnect;
+package app.carebnb.raspberrywifi;
 
 import com.facebook.react.ReactActivity;
 
