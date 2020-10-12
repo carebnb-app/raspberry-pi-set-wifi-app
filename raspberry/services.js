@@ -1,7 +1,5 @@
 import * as wifiServices from './src/services/wifi'
-
 import { sleep } from './src/helpers/sleep'
-
 import * as config from './config'
 
 const properties = new Map()
@@ -10,14 +8,9 @@ export const set = (key, value) => properties.set(key, value)
 export const get = (key) => properties.get(key)
 
 async function wifiService () {
-  //await sleep(60000)
-
   await wifiServices.disableAccessPoint()
-
   await sleep(10000)
-
   const isConnected = config.FORCE_ACCESSPOINT === '1' ? false : wifiServices.checkIfIsConnected()
-
   await wifiServices.enableAccessPoint()
 
   if (isConnected) {
