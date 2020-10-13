@@ -8,8 +8,10 @@ export const set = (key, value) => properties.set(key, value)
 export const get = (key) => properties.get(key)
 
 async function wifiService () {
-  await wifiServices.disableAccessPoint()
-  await sleep(10000)
+  wifiServices.disableAccessPoint(() => {
+    console.log('Access point disabled')
+    // @TODO rewrite this
+/*
   const isConnected = config.FORCE_ACCESSPOINT === '1' ? false : wifiServices.checkIfIsConnected()
   await wifiServices.enableAccessPoint()
 
@@ -24,7 +26,8 @@ async function wifiService () {
     }, 120000)
 
     set('autoConnect', autoConnect)
-  }
+  }*/
+  })
 }
 
 async function run () {
