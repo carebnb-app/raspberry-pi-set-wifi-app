@@ -29,9 +29,11 @@ const journalctl = new Journalctl({
 journalctl.on('event', (event) => {
   if( event.MESSAGE === 'pam_unix(sudo:session): session closed for user root' ){
     if(!conclusionMessages.search(event._CMDLINE)){
+      console.log('command-finished ' + event._CMDLINE)
       eventEmitter.emit('command-finished ' + event._CMDLINE)
     }
   } else if(conclusionMessages.has(event.MESSAGE)){
+    console.log('command-finished ' + conclusionMessages.get(event.MESSAGE))
     eventEmitter.emit('command-finished ' + conclusionMessages.get(event.MESSAGE))
   }
 })
@@ -165,8 +167,8 @@ export const disconnect = async () => {
  */
 export const enableAccessPoint = (callback) => {
   console.log('Enabling access point')
+  disableAccessPoint(() => {
   writeAccessPointFiles('ap')
-  execWithJournalctlCallback(`sudo iw dev ${config.IFFACE} del`, () => {
     execWithJournalctlCallback(`sudo iw dev ${config.IFFACE_CLIENT} interface add ${config.IFFACE} type __ap`, () => {
       execWithJournalctlCallback('sudo systemctl start dhcpcd', () => {
         execWithJournalctlCallback('sudo systemctl enable hostapd', () => {
