@@ -7,6 +7,7 @@ import fs from 'fs'
 import cp from 'child_process'
 import Journalctl from 'journalctl'
 import EventEmitter from 'events'
+import Hashmap from 'hashmap'
 
 const iw = require('iwlist')(config.IFFACE)
 
@@ -27,15 +28,23 @@ const journalctl = new Journalctl({
 })
 journalctl.on('event', (event) => {
   if( event.MESSAGE === 'pam_unix(sudo:session): session closed for user root' ){
-    eventEmitter.emit('command-finished ' + event._CMDLINE)
+    if(!conclusionMessages.search(event._CMDLINE)){
+      eventEmitter.emit('command-finished ' + event._CMDLINE)
+    }
+  } else if(conclusionMessages.has(event.MESSAGE)){
+    eventEmitter.emit('command-finished ' + conclusionMessages.get(event.MESSAGE))
   }
 })
 
 // Execute long running operations and wait for stdout on journalctl
 // This gives feedback to commands without output
-const execWithJournalctlCallback = (command, callback) => {
-  cp.exec(command)
+const conclusionMessages = new Hashmap()
+const execWithJournalctlCallback = (command, callback, conclusionMessage = null) => {
+  if(conclusionMessage !== null){
+    conclusionMessages.set(conclusionMessage, command)
+  }
   eventEmitter.once('command-finished ' + command, callback)
+  cp.exec(command)
 }
 
 // Eecute ssh commands without taking any caution
@@ -157,19 +166,21 @@ export const disconnect = async () => {
 export const enableAccessPoint = (callback) => {
   console.log('Enabling access point')
   writeAccessPointFiles('ap')
-  execWithJournalctlCallback(`sudo iw dev ${config.IFFACE_CLIENT} interface add ${config.IFFACE} type __ap`, () => {
-    execWithJournalctlCallback('sudo systemctl start dhcpcd', () => {
-      execWithJournalctlCallback('sudo systemctl enable hostapd', () => {
-        execWithJournalctlCallback('sudo systemctl unmask hostapd', () => {
-          execWithJournalctlCallback('sudo systemctl start hostapd', () => {
-            execWithJournalctlCallback('sudo systemctl start dnsmasq', () => {
-              callback()
+  execWithJournalctlCallback(`sudo iw dev ${config.IFFACE} del`, () => {
+    execWithJournalctlCallback(`sudo iw dev ${config.IFFACE_CLIENT} interface add ${config.IFFACE} type __ap`, () => {
+      execWithJournalctlCallback('sudo systemctl start dhcpcd', () => {
+        execWithJournalctlCallback('sudo systemctl enable hostapd', () => {
+          execWithJournalctlCallback('sudo systemctl unmask hostapd', () => {
+            execWithJournalctlCallback('sudo systemctl start hostapd', () => {
+              execWithJournalctlCallback('sudo systemctl start dnsmasq', () => {
+                callback()
+              })
             })
           })
         })
       })
-    })
-  })
+    }, 'Interface uap0.IPv6 no longer relevant for mDNS')
+  }, 'uap0: removing interface')
 }
 
 /**
@@ -186,9 +197,11 @@ export const disableAccessPoint = (callback) => {
   execWithJournalctlCallback('sudo systemctl stop dnsmasq', () => {
     execWithJournalctlCallback('sudo systemctl stop hostapd', () => {
       execWithJournalctlCallback('sudo systemctl disable hostapd', () => {
-        execWithJournalctlCallback('sudo systemctl restart dhcpd', () => {
-          callback()
-        })
+        execWithJournalctlCallback(`sudo iw dev ${config.IFFACE} del`, () => {
+          execWithJournalctlCallback('sudo systemctl restart dhcpd', () => {
+            callback()
+          })
+        }, 'uap0: removing interface')
       })
     })
   })
