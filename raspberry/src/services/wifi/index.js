@@ -179,8 +179,8 @@ export const enableAccessPoint = (callback) => {
           })
         })
       })
-    }, 'Interface uap0.IPv6 no longer relevant for mDNS')
-  }, 'uap0: removing interface')
+    }, `Interface ${config.IFFACE}.IPv6 no longer relevant for mDNS.`)
+  })
 }
 
 /**
@@ -201,7 +201,7 @@ export const disableAccessPoint = (callback) => {
           execWithJournalctlCallback('sudo systemctl restart dhcpd', () => {
             callback()
           })
-        }, 'uap0: removing interface')
+        })
       })
     })
   })
