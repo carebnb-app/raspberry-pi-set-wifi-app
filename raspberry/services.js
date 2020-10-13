@@ -1,6 +1,4 @@
-import * as wifiServices from './src/services/wifi'
-import { sleep } from './src/helpers/sleep'
-import * as config from './config'
+import * as wifi from './src/services/wifi'
 
 const properties = new Map()
 
@@ -8,26 +6,17 @@ export const set = (key, value) => properties.set(key, value)
 export const get = (key) => properties.get(key)
 
 async function wifiService () {
-  wifiServices.disableAccessPoint(() => {
-    console.log('Access point disabled')
-    // @TODO rewrite this
-/*
-  const isConnected = config.FORCE_ACCESSPOINT === '1' ? false : wifiServices.checkIfIsConnected()
-  await wifiServices.enableAccessPoint()
-
-  if (isConnected) {
-    const autoConnect = setTimeout(async () => {
-      console.log('AUTOCONNECT')
-      await wifiServices.disableAccessPoint()
-      try {
-        await sleep(10000)
-        await wifiServices.connect()
-      } catch (err) { console.log(err) }
-    }, 120000)
-
-    set('autoConnect', autoConnect)
-  }*/
-  })
+  if(wifi.checkIfIsConnected()){
+    console.log('Wifi already connected')
+    wifi.disableAccessPoint(() => {
+      console.log('Access point disabled')
+    })
+  }
+  else{
+    wifi.enableAccessPoint(() => {
+      console.log('Access point enabled')
+    })
+  }
 }
 
 async function run () {

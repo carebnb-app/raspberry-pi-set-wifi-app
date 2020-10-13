@@ -10,14 +10,16 @@ export const checkConnection = async () => {
 
 export const disable = async () => {
   wifi.disableAccessPoint()
-
-  return { status: 'disabling' }
+  return { status: 'disabled' }
 }
 
 export const connect = async ({ params }) => {
   if (!params.ssid) throw new Error('INVALID_PARAMS')
-
-  const result = await wifi.connect(params.ssid, params.password, params.countryCode)
-
-  return result
+  const success = await wifi.connect(params.ssid, params.password, params.countryCode)
+  if(success){
+    wifi.disableAccessPoint(() => {
+      console.log('Access point disabled')
+    })
+  }
+  return { success }
 }
