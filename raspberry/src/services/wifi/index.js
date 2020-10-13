@@ -157,12 +157,14 @@ export const disconnect = async () => {
 export const enableAccessPoint = (callback) => {
   console.log('Enabling access point')
   writeAccessPointFiles('ap')
-  execWithJournalctlCallback('sudo systemctl start dhcpcd', () => {
-    execWithJournalctlCallback('sudo systemctl enable hostapd', () => {
-      execWithJournalctlCallback('sudo systemctl unmask hostapd', () => {
-        execWithJournalctlCallback('sudo systemctl start hostapd', () => {
-          execWithJournalctlCallback('sudo systemctl start dnsmasq', () => {
-            callback()
+  execWithJournalctlCallback(`sudo iw dev ${config.IFFACE_CLIENT} interface add ${config.IFFACE} type __ap`, () => {
+    execWithJournalctlCallback('sudo systemctl start dhcpcd', () => {
+      execWithJournalctlCallback('sudo systemctl enable hostapd', () => {
+        execWithJournalctlCallback('sudo systemctl unmask hostapd', () => {
+          execWithJournalctlCallback('sudo systemctl start hostapd', () => {
+            execWithJournalctlCallback('sudo systemctl start dnsmasq', () => {
+              callback()
+            })
           })
         })
       })
