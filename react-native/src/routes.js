@@ -1,13 +1,9 @@
 import React from 'react'
-
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-
 import * as config from '../config'
-
 import { useIsConnectedToNetwork } from './helpers/useIsConnectedToNetwork'
-
-import ConnectToNetwork from './containers/connectToNetwork'
+import Home from './containers/home'
 import SetNetworkInRasoberry from './containers/setNetworkInRaspberry'
 import CheckConnection from './containers/checkConnection'
 
@@ -22,7 +18,7 @@ export default function Routes () {
         {isConnectedToCarebnb ? (
           <Stack.Screen name='SetNetworkInRasoberry' component={SetNetworkInRasoberry} />
         ) : (
-          <Stack.Screen name='ConnectToNetwork' component={ConnectToNetwork} />
+          <Stack.Screen name='Home' component={Home} />
         )}
         <Stack.Screen name='CheckConnection' component={CheckConnection} />
       </Stack.Navigator>

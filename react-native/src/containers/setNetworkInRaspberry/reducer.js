@@ -1,5 +1,5 @@
 import { createReducer } from 'redux-act'
-import { getStatus, getNetworks } from './actions'
+import { getProperties, getWifiList } from './actions'
 import { fulfilled, rejected, pending } from '../../helpers/reducerPromiseHelper'
 
 const initialState = {
@@ -8,22 +8,22 @@ const initialState = {
 }
 
 export default createReducer({
-  [fulfilled(getNetworks)]: (state, payload) => ({
+  [fulfilled(getWifiList)]: (state, payload) => ({
     ...state,
     networks: payload.data
   }),
 
-  [fulfilled(getStatus)]: (state, payload) => ({
+  [fulfilled(getProperties)]: (state, payload) => ({
     ...state,
-    status: payload.data.type ? 'success' : 'failed'
+    status: payload.data.name ? 'success' : 'failed'
   }),
 
-  [rejected(getStatus)]: (state) => ({
+  [rejected(getProperties)]: (state) => ({
     ...state,
     status: 'failed'
   }),
 
-  [pending(getStatus)]: (state) => ({
+  [pending(getProperties)]: (state) => ({
     ...state,
     status: 'pending'
   })

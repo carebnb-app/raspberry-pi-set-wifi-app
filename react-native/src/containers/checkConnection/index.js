@@ -13,14 +13,14 @@ function useDispatcher () {
 
   return useMemo(() => ({
     setStatus: data => dispatch(actions.setStatus(data)),
-    checkConnection: data => dispatch(actions.checkConnection(data)),
-    disableAccessPoint: data => dispatch(actions.disableAccessPoint(data))
+    getWifiStatus: data => dispatch(actions.getWifiStatus(data)),
+    putApDisable: data => dispatch(actions.putApDisable(data))
   }), [dispatch])
 }
 
 
 export default function CheckConnection ({ navigation, route }) {
-  const { setStatus, checkConnection, disableAccessPoint } = useDispatcher()
+  const { setStatus, getWifiStatus, putApDisable } = useDispatcher()
   const status = useSelector(d => d.checkConnection.status)
   const [isConnected] = useIsConnectedToNetwork(config.DEFAULT_NETWORK_NAME)
   const { ssid } = route.params
@@ -46,7 +46,7 @@ export default function CheckConnection ({ navigation, route }) {
     })
 
     return () => timeout && clearTimeout(timeout)
-  }, [setStatus, checkConnection, navigation])
+  }, [setStatus, getWifiStatus, navigation])
 
   useEffect(() => {
     if (isConnected) { 
@@ -60,7 +60,7 @@ export default function CheckConnection ({ navigation, route }) {
     const timeout = setTimeout(async () => {
       if (status === 'check-connection') {
         try {
-          const { value: { data: { status } } } = await checkConnection()
+          const { value: { data: { status } } } = await getWifiStatus()
           setStatus(status)
           if (status === 'connected') {
             alert(
@@ -68,8 +68,8 @@ export default function CheckConnection ({ navigation, route }) {
               'Your device is connected with success!'
             )
             setTimeout(() => {
-              disableAccessPoint()
-            }, 2000)
+              putApDisable()
+            }, 1000)
           }
         } catch (err) {
           return alert(
@@ -81,7 +81,7 @@ export default function CheckConnection ({ navigation, route }) {
     }, 15000)
 
     return () => timeout && clearTimeout(timeout)
-  }, [status, setStatus, checkConnection])
+  }, [status, setStatus, getWifiStatus])
 
   useLayoutEffect(() => {
     navigation.setOptions({

@@ -17,7 +17,7 @@ export default function ConnectToNetwork ({ navigation }) {
       <View style={style.inside}>
         <Text style={style.text}>Connect this device to the network</Text>
         <Text style={style.bold}>"{config.DEFAULT_NETWORK_NAME}"</Text>
-        <Button onPress={openSettings} title='Connect to wifi network' />
+        <Button onPress={openSettings} title='Connect to network' />
       </View>
     </View>
   )

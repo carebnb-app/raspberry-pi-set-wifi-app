@@ -13,14 +13,14 @@ function useDispatcher () {
   const dispatch = useDispatch()
 
   return useMemo(() => ({
-    getStatus: data => dispatch(actions.getStatus(data)),
-    getNetworks: data => dispatch(actions.getNetworks(data)),
-    connect: data => dispatch(actions.connect(data))
+    getProperties: data => dispatch(actions.getProperties(data)),
+    getWifiList: data => dispatch(actions.getWifiList(data)),
+    postWifiConnect: data => dispatch(actions.postWifiConnect(data))
   }), [dispatch])
 }
 
 export default function SetNetworkInRaspberry ({ route, navigation }) {
-  const { getStatus, getNetworks, connect } = useDispatcher()
+  const { getProperties, getWifiList, postWifiConnect } = useDispatcher()
   const [ssid, setSsid] = useState(route.params?.ssid || '')
   const [password, setPassword] = useState(route.params?.password || '')
 
@@ -33,24 +33,24 @@ export default function SetNetworkInRaspberry ({ route, navigation }) {
 
   const status = useSelector(d => d.setNetworkInRaspberry.status)
   const _networks = useSelector(d => d.setNetworkInRaspberry.networks)
-  const isLoading = useSelector(d => d.isLoading[actions.connect])
-  const isLoadingNetworks = useSelector(d => d.isLoading[actions.getNetworks])
+  const isLoading = useSelector(d => d.isLoading[actions.postWifiConnect])
+  const isLoadingNetworks = useSelector(d => d.isLoading[actions.getWifiList])
 
   useEffect(() => {
-    if (status === 'success') getNetworks()
-  }, [status, getNetworks])
+    if (status === 'success') getWifiList()
+  }, [status, getWifiList])
 
   const networks = useMemo(() => {
     return _networks.map(d => ({ name: d.ssid, value: d.ssid }))
   }, [_networks])
 
   useEffect(() => {
-    getStatus()
-  }, [getStatus])
+    getProperties()
+  }, [getProperties])
 
   const submit = async () => {
     try {
-      await connect({ 
+      await postWifiConnect({ 
         ssid, 
         password, 
         countryCode: RNLocalize.getCountry()
@@ -87,7 +87,7 @@ export default function SetNetworkInRaspberry ({ route, navigation }) {
         </View>
       </KeyboardAwareness>
       {['pending', 'failed'].includes(status) && (
-        <Status status={status} onPress={getStatus} />
+        <Status status={status} onPress={getProperties} />
       )}
     </>
   )
