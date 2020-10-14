@@ -61,7 +61,7 @@ const execIgnoreFail = params => {
 }
 
 // Holds scanned networks SSIDs
-var scanned = []
+let scanned = []
 const _scan = () => new Promise((resolve, reject) => {
   iw.scan((err, result) => {
     if (err) return reject(err)
@@ -109,8 +109,8 @@ export const connect = async (ssid, password, countryCode = config.COUNTRY) => {
   // Write a wpa_suppplicant.conf file and save it
   const fileContent = template(path.join(__dirname, `../../templates/wpa_supplicant.hbs`), {
     country: countryCode,
-    ssid: JSON.stringify(ssid),
-    psk: JSON.stringify(password)
+    ssid: ssid,
+    psk: password
   })
   fs.writeFileSync('/etc/wpa_supplicant/wpa_supplicant.conf', fileContent)
 

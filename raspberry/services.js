@@ -9,12 +9,12 @@ async function wifiService () {
   if(wifi.checkIfIsConnected()){
     console.log('Wifi already connected')
     wifi.disableAccessPoint(() => {
-      console.log('Access point disabled')
+      console.log('Access point disabled on startup')
     })
   }
   else{
     wifi.enableAccessPoint(() => {
-      console.log('Access point enabled')
+      console.log('Access point enabled on startup')
     })
   }
 }

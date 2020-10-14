@@ -9,7 +9,9 @@ export const checkConnection = async () => {
 }
 
 export const disable = async () => {
-  wifi.disableAccessPoint()
+  wifi.disableAccessPoint(() => {
+    console.log('Access point disabled from controller/wifi/disable')
+  })
   return { status: 'disabled' }
 }
 
@@ -18,7 +20,7 @@ export const connect = async ({ params }) => {
   const success = await wifi.connect(params.ssid, params.password, params.countryCode)
   if(success){
     wifi.disableAccessPoint(() => {
-      console.log('Access point disabled')
+      console.log('Access point disabled from controller/wifi/connect')
     })
   }
   return { success }
