@@ -102,10 +102,9 @@ export const checkIfIsConnected = () => {
  * @param {String} ssid 
  * @param {String} password 
  * @param {String} countryCode 
- * 
- * @returns {boolean}
+ * @param {Function} callback
  */
-export const connect = async (ssid, password, countryCode = config.COUNTRY) => {
+export const connect = (ssid, password, countryCode = config.COUNTRY, callback) => {
   // Write a wpa_suppplicant.conf file and save it
   const fileContent = template(path.join(__dirname, `../../templates/wpa_supplicant.hbs`), {
     country: countryCode,
@@ -121,12 +120,12 @@ export const connect = async (ssid, password, countryCode = config.COUNTRY) => {
         // Retry
         execWithJournalctlCallback(`sudo wpa_cli -i${config.IFFACE_CLIENT} RECONFIGURE`, () => {
           execWithJournalctlCallback(`sudo ifconfig ${config.IFFACE_CLIENT} up`, () => {
-            return checkIfIsConnected()
+            callback(checkIfIsConnected())
           })
         })
       }
       else{
-        return true
+        callback(true)
       }
     })
   })

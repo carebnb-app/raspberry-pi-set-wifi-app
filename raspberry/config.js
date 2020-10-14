@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const PROJECT_NAME = process.env.PROJECT_NAME || 'Carebnb'
+export const CUSTOM_PROPERTIES_FILE = process.env.CUSTOM_PROPERTIES_FILE || '/var/carebnb_props.json'
 
 export const API_URL = process.env.API_URL || 'http://localhost:3500'
 export const API_PORT = process.env.API_PORT || '3500'
