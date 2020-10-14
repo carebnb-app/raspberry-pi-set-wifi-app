@@ -34,7 +34,11 @@ export const postProperties = async ({ params }) => {
  * Return with a set of SSIDS and other wifi properties.
  */
 export const getWifiList = async () => {
-  return wifi.scan()
+  try{
+    return wifi.scan()
+  } catch {
+    return []
+  }
 }
 
 /**
