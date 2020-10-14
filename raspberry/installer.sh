@@ -13,6 +13,11 @@ sudo apt-get -y upgrade
 # tar -xzf node-v11.15.0-linux-armv6l.tar.gz
 # sudo cp -R node-v11.15.0-linux-armv6l/. /usr/local/
 
+# Remove preexistent dependencies
+# Necessary on raspberry PI 3A
+sudo apt-get --purge remove -y node
+sudo apt-get --purge remove -y nodejs
+
 # Install dependencies
 sudo apt-get install -y nodejs
 sudo apt-get install -y git
