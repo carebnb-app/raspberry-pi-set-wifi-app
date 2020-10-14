@@ -54,20 +54,9 @@ export const getWifiStatus = async () => {
  */
 export const postWifiConnect = async ({ params }) => {
   if (!params.ssid || !params.countryCode) throw new Error('INVALID_PARAMS')
-  var hasResponse = false
   wifi.connect(params.ssid, params.password, params.countryCode, (response) => {
-    hasResponse = true
-    success = response
+    console.log('Wifi connection response: ' + response)
   })
-
-  // Stall waiting for connection to be concluded
-  while(!hasResponse){}
-
-  // Auto disable access point
-  // wifi.disableAccessPoint(() => {
-  //   console.log('Access point disabled from controller/wifi/postWifiConnect')
-  // })
-
   return { success }
 }
 
