@@ -7,4 +7,5 @@ export default function routes (router) {
   router.get('/wifi/list', connect(controller.getWifiList))
   router.get('/wifi/status', connect(controller.getWifiStatus))
   router.post('/wifi/connect', connect(controller.postWifiConnect))
+  router.put('/ap/disable', connect(controller.putAccessPointDisable))
 }

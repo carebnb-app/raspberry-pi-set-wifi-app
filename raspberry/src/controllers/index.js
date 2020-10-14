@@ -64,9 +64,19 @@ export const postWifiConnect = async ({ params }) => {
   while(!hasResponse){}
 
   // Auto disable access point
-  wifi.disableAccessPoint(() => {
-    console.log('Access point disabled from controller/wifi/disable')
-  })
+  // wifi.disableAccessPoint(() => {
+  //   console.log('Access point disabled from controller/wifi/postWifiConnect')
+  // })
 
   return { success }
+}
+
+/**
+ * Disable access point
+ */
+export const putAccessPointDisable = async () => {
+  wifi.disableAccessPoint(() => {
+    console.log('Access point disabled from controller/wifi/putAccessPointDisable')
+  })
+  return { status: 'disabled' }
 }
