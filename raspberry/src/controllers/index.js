@@ -25,8 +25,8 @@ export const getProperties = async () => {
  * It will save on the filesystem a json with received properties.
  * This can be useful if one wants to add custom setup to the device.
  */
-export const postProperties = async ({ params, body }) => {
-  propertiesFile.write(body)
+export const postProperties = async ({ params }) => {
+  propertiesFile.write(params)
   return { success: true }
 }
 
