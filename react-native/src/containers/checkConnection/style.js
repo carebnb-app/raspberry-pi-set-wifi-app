@@ -24,7 +24,7 @@ export default StyleSheet.create({
     marginBottom: 10
   },
 
-  wifiText: {
+  bold: {
     width: '90%',
     height: 100,
     marginTop: 20,

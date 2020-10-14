@@ -63,7 +63,7 @@ export default class Selector extends Component {
               </View>
               <View style={style.search}>
                 <TextInput
-                  placeholder='Procurar'
+                  placeholder='search'
                   value={this.state.search}
                   onChangeText={this._set}
                   selectTextOnFocus

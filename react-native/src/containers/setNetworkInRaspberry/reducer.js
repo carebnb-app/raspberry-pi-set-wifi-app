@@ -1,7 +1,5 @@
 import { createReducer } from 'redux-act'
-
 import { getStatus, getNetworks } from './actions'
-
 import { fulfilled, rejected, pending } from '../../helpers/reducerPromiseHelper'
 
 const initialState = {

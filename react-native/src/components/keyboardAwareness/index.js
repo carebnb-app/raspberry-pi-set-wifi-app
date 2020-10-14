@@ -41,7 +41,7 @@ export default class KeyboardAwareness extends Component {
     this.state = { height: 0 }
   }
 
-  componentWillMount () {
+  componentDidMount () {
     this._keyboardWillShowSub = Keyboard.addListener('keyboardWillShow', this._keyboardDidShow)
     this._keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow)
     this._keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide)

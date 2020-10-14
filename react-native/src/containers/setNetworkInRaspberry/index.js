@@ -1,20 +1,12 @@
 import React, { useState, useMemo, useEffect, useLayoutEffect } from 'react'
-
 import { useDispatch, useSelector } from 'react-redux'
-
 import * as RNLocalize from 'react-native-localize'
-
 import { View, Button } from 'react-native'
-
 import Status from '../../components/status'
 import KeyboardAwareness from '../../components/keyboardAwareness'
 import Selector from '../../components/selector'
 import TextInput from '../../components/textInput'
-
-import alert from '../../helpers/alert'
-
 import * as actions from './actions'
-
 import style from './style'
 
 function useDispatcher () {
@@ -29,14 +21,13 @@ function useDispatcher () {
 
 export default function SetNetworkInRaspberry ({ route, navigation }) {
   const { getStatus, getNetworks, connect } = useDispatcher()
-
   const [ssid, setSsid] = useState(route.params?.ssid || '')
   const [password, setPassword] = useState(route.params?.password || '')
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackTitle: ' ',
-      headerTitle: 'Configurar...'
+      headerTitle: 'Carebnb device setup'
     })
   }, [navigation])
 
@@ -74,7 +65,7 @@ export default function SetNetworkInRaspberry ({ route, navigation }) {
       <KeyboardAwareness>
         <View style={style.container}>
           <Selector
-            placeholder='Selecionar rede...'
+            placeholder='Network name'
             options={networks}
             value={ssid}
             isLoading={isLoadingNetworks}
@@ -82,7 +73,7 @@ export default function SetNetworkInRaspberry ({ route, navigation }) {
           />
           <TextInput
             secureTextEntry
-            placeholder='Senha...'
+            placeholder='Network password'
             value={password}
             autoCapitalize='none'
             autoCompleteType='password'
@@ -91,7 +82,7 @@ export default function SetNetworkInRaspberry ({ route, navigation }) {
           <Button
             onPress={submit}
             disabled={!(password && ssid) || isLoading}
-            title={isLoading ? 'Carregando...' : 'Configurar rede'}
+            title={isLoading ? 'Connecting...' : 'Connect'}
           />
         </View>
       </KeyboardAwareness>

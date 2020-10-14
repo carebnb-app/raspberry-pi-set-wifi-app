@@ -1,8 +1,7 @@
 import React from 'react'
-
 import { Text, Modal as ModalRN, View, ActivityIndicator, Button } from 'react-native'
-
 import style from './style'
+
 export default function Modal ({ status, onPress }) {
   return (
     <ModalRN visible transparent>
@@ -10,13 +9,13 @@ export default function Modal ({ status, onPress }) {
         {status === 'pending' && (
           <>
             <ActivityIndicator color='#000' size='large' />
-            <Text style={style.title}>Verificando dispositivo...</Text>
+            <Text style={style.title}>Verifying Carebnb device...</Text>
           </>
         )}
         {status === 'failed' && (
           <>
-            <Text style={style.title}>Encontramos algo de errado</Text>
-            <Button title='Tentar novamente' onPress={onPress} />
+            <Text style={style.title}>Couldn't retrieve device state</Text>
+            <Button title='Try again' onPress={onPress} />
           </>
         )}
       </View>

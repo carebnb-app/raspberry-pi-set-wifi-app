@@ -1,22 +1,11 @@
 import React, { useMemo, useEffect, useLayoutEffect } from 'react'
-
 import { View, Text, Button, ActivityIndicator } from 'react-native'
-
 import style from './style'
-
 import * as config from '../../../config'
-
 import * as actions from './actions'
 import { useDispatch, useSelector } from 'react-redux'
-
-import { openSettings } from '../../helpers/openSettings'
-
 import { useIsConnectedToNetwork } from '../../helpers/useIsConnectedToNetwork'
-
-import WifiManager from 'react-native-wifi-reborn'
-
 import alert from '../../helpers/alert'
-
 import { connectToSSID, getCurrentWifiSSID } from '../../helpers/connectToSsid'
 
 function useDispatcher () {
@@ -32,11 +21,8 @@ function useDispatcher () {
 
 export default function CheckConnection ({ navigation, route }) {
   const { setStatus, checkConnection, disableAccessPoint } = useDispatcher()
-
   const status = useSelector(d => d.checkConnection.status)
-
   const [isConnected] = useIsConnectedToNetwork(config.DEFAULT_NETWORK_NAME)
-
   const { ssid } = route.params
 
   useEffect(() => {
@@ -78,8 +64,8 @@ export default function CheckConnection ({ navigation, route }) {
           setStatus(status)
           if (status === 'connected') {
             alert(
-              'Sucesso!',
-              'Conectado com sucesso!'
+              'All done!',
+              'Your device is connected with success!'
             )
             setTimeout(() => {
               disableAccessPoint()
@@ -100,7 +86,7 @@ export default function CheckConnection ({ navigation, route }) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerBackTitle: ' ',
-      headerTitle: 'Verificando conexão'
+      headerTitle: 'Checking connection'
     })
   }, [navigation])
 
@@ -115,16 +101,16 @@ export default function CheckConnection ({ navigation, route }) {
         {['connected', 'disconnected'].includes(status) === false && (
           <ActivityIndicator style={style.indicator} size="large" />
         )}
-        <Text style={style.text}>Verificando conexão com {ssid}</Text>
-        <Text style={style.wifiText}>
-          {status === 'connecting' && `Conectando com a rede ${config.DEFAULT_NETWORK_NAME}`}
-          {status === 'failed-connection' && `Não foi possivel conectar a rede ${config.DEFAULT_NETWORK_NAME}`}
-          {status === 'await' && 'Aguardando conexão...'}
-          {status === 'check-connection' && 'Verificando conexão...'}
-          {status === 'disconnected' && `Não foi possivel realizar a conexão com a rede ${ssid}. Tente novamente.`}
+        <Text style={style.text}>Verifying connection with {ssid}</Text>
+        <Text style={style.bold}>
+          {status === 'connecting' && `Connecting with ${ssid}`}
+          {status === 'failed-connection' && `Couldn't connect with ${ssid}`}
+          {status === 'await' && 'Waiting connection...'}
+          {status === 'check-connection' && 'Verifying connection...'}
+          {status === 'disconnected' && `Couldn't connect with ${ssid}. Please try again.`}
         </Text>
-        {status === 'failed-connection' && <Button onPress={openSettings} title='Conectar manualmente' />}
-        <Button onPress={goBack} title='Voltar' />
+        {/* {status === 'failed-connection' && <Button onPress={openSettings} title='Connect manually' />} */}
+        <Button onPress={goBack} title='Back' />
       </View>
     </View>
   )

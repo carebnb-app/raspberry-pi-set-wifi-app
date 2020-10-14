@@ -1,5 +1,4 @@
 import { createReducer } from 'redux-act'
-
 import { setStatus } from './actions'
 
 const initialState = {
