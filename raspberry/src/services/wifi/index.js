@@ -61,7 +61,7 @@ const execIgnoreFail = params => {
 }
 
 // Holds scanned networks SSIDs
-const scanned = []
+var scanned = []
 const _scan = () => new Promise((resolve, reject) => {
   iw.scan((err, result) => {
     if (err) return reject(err)
@@ -107,29 +107,12 @@ export const checkIfIsConnected = () => {
  */
 export const connect = async (ssid, password, countryCode = config.COUNTRY) => {
   // Write a wpa_suppplicant.conf file and save it
-  const fileName = '/etc/wpa_supplicant/wpa_supplicant.conf'
-  const file = fs.readFileSync(fileName).toString().split(/\r|\n/)
-  const findNetwork = _.findIndex(file, l => _.includes(l, 'network={'))
-  const findCountry = _.findIndex(file, l => _.includes(l, 'country='))
-  const findNetworkAfter = _.findIndex(file, l => _.includes(l, '}'))
-  const fileEnd = (findNetwork !== -1) ? _.map(file, (d, i) => {
-    if (i === findCountry) return ''
-    if (i >= findNetwork && i <= findNetworkAfter) {
-      return ''
-    }
-    return d
-  }) : file
-
-  const result = fileEnd.join('\n').trim() + (`
-
-country=${countryCode}
-
-network={
-    ssid=${JSON.stringify(ssid)}
-    ${password ? `psk=${JSON.stringify(password)}` : ''}
-}
-`)
-  fs.writeFileSync(fileName, result)
+  const fileContent = template(path.join(__dirname, `../../templates/wpa_supplicant.hbs`), {
+    country: countryCode,
+    ssid: JSON.stringify(ssid),
+    psk: JSON.stringify(password)
+  })
+  fs.writeFileSync('/etc/wpa_supplicant/wpa_supplicant.conf', fileContent)
 
   // Restart network drivers
   execWithJournalctlCallback(`sudo killall wpa_supplicant`, () => {
