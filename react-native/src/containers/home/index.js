@@ -21,7 +21,7 @@ export default function ConnectToNetwork ({ navigation }) {
         <View style={style.lottieView}>
           <LottieView source={require('../../assets/lottie/wifi-connection.json')} autoPlay loop />
         </View>
-        <Text style={style.desc}>Connect this phone{"\n"}to a network called</Text>
+        <Text style={style.desc}>Connect this phone{"\n"}to a network named</Text>
         <Text style={style.bold}>"{config.DEFAULT_NETWORK_NAME}"</Text>
       </View>
       <View style={style.bottom}>
