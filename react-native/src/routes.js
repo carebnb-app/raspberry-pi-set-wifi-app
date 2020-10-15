@@ -15,12 +15,11 @@ export default function Routes () {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* {isConnectedToCarebnb ? (
+        {isConnectedToCarebnb ? (
           <Stack.Screen name='SetupWifi' component={SetupWifi} />
         ) : (
           <Stack.Screen name='Home' component={Home} />
-        )} */}
-        <Stack.Screen name='SetupWifi' component={SetupWifi} />
+        )}
         <Stack.Screen name='CheckConnection' component={CheckConnection} />
       </Stack.Navigator>
     </NavigationContainer>
