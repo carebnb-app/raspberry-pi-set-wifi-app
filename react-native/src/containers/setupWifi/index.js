@@ -19,7 +19,7 @@ function useDispatcher () {
   }), [dispatch])
 }
 
-export default function SetNetworkInRaspberry ({ route, navigation }) {
+export default function SetupWifi ({ route, navigation }) {
   const { getProperties, getWifiList, postWifiConnect } = useDispatcher()
   const [ssid, setSsid] = useState(route.params?.ssid || '')
   const [password, setPassword] = useState(route.params?.password || '')
@@ -31,8 +31,8 @@ export default function SetNetworkInRaspberry ({ route, navigation }) {
     })
   }, [navigation])
 
-  const status = useSelector(d => d.setNetworkInRaspberry.status)
-  const _networks = useSelector(d => d.setNetworkInRaspberry.networks)
+  const status = useSelector(d => d.setupWifi.status)
+  const _networks = useSelector(d => d.setupWifi.networks)
   const isLoading = useSelector(d => d.isLoading[actions.postWifiConnect])
   const isLoadingNetworks = useSelector(d => d.isLoading[actions.getWifiList])
 
