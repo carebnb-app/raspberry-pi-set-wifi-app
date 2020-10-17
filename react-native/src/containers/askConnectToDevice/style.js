@@ -1,6 +1,13 @@
 import { StyleSheet } from 'react-native'
 
 export default StyleSheet.create({
+  header: {
+    backgroundColor: '#EB5757'
+  },
+
+  headerTitle: {
+    color: '#ffffff'
+  },
 
   alert: {
     width: 100,
@@ -13,8 +20,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#EB5757'
+    justifyContent: 'center'
   },
 
   inside: {
@@ -27,18 +33,24 @@ export default StyleSheet.create({
   desc: {
     textAlign: 'center',
     fontSize: 18,
-    margin: 20,
-    color: '#ffffff'
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 10
+  },
+
+  descLight: {
+    textAlign: 'center',
+    fontSize: 12,
+    margin: 20
   },
 
   bold: {
-    marginBottom: 20,
     fontWeight: 'bold',
     fontSize: 20,
-    color: '#ffffff'
+    marginBottom: 20
   },
 
-  imageView: {
+  lottieView: {
     width: 200,
     height: 200
   },

@@ -92,7 +92,7 @@ export default function CheckConnection ({ navigation, route }) {
 
 
   const goBack = () => {
-    navigation.replace(isConnected ? 'SetupWifi' : 'ConnectToNetwork', route.params)
+    navigation.replace(isConnected ? 'SetupWifi' : 'AskConnectToDevice', route.params)
   }
 
   return (

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-
 import { PermissionsAndroid, Platform } from 'react-native'
 
-export function usePermissionsNetworkAndroid () {
+export function usePermissionsLocationAndroid () {
   const [isGranted, setGranted] = useState(Platform.select({ ios: true, android: false }))
 
   useEffect(() => {
@@ -11,10 +10,10 @@ export function usePermissionsNetworkAndroid () {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
-            title: 'Precisamos acessar sua localização',
-            message: 'Para podermos localizar as redes wifi precisamos de acesso a sua localização',
-            buttonNegative: 'Negar',
-            buttonPositive: 'Permitir'
+            title: 'We need your location',
+            message: 'To set up your device\'s wifi and location, we need your location',
+            buttonNegative: 'Deny',
+            buttonPositive: 'Allow'
           }
         )
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {

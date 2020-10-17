@@ -8,13 +8,13 @@ export default function Modal ({ status, onPress }) {
       <View style={style.container}>
         {status === 'pending' && (
           <>
-            <ActivityIndicator color='#000' size='large' />
-            <Text style={style.title}>Verifying Carebnb device...</Text>
+            <ActivityIndicator color='#fff' size='large' />
+            <Text style={style.title}>Checking your{'\r\n'}Carebnb device state...</Text>
           </>
         )}
         {status === 'failed' && (
           <>
-            <Text style={style.title}>Couldn't retrieve device state</Text>
+            <Text style={style.title}>Couldn't retrieve Carebnb{'\r\n'}device state</Text>
             <Button title='Try again' onPress={onPress} />
           </>
         )}
